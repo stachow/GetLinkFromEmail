@@ -25,10 +25,10 @@ namespace GetLink
             // Create a listener.
             var listener = new HttpListener();
             listener.Prefixes.Add(prefix);
-            
+            listener.Start();
             while (true)
             {
-                listener.Start();
+                
                 feedback("Listening on " + prefix);
                 // Note: The GetContext method blocks while waiting for a request.
                 var context = listener.GetContextAsync().Result;
@@ -46,7 +46,6 @@ namespace GetLink
                     response.StatusCode = 404;
                     response.ContentLength64 = 0;
                     response.OutputStream.Close();
-                    listener.Stop();
                 } 
                 else
                 {
@@ -64,9 +63,10 @@ namespace GetLink
                     var output = response.OutputStream;
                     output.Write(buffer, 0, buffer.Length);
                     output.Close();
-                    listener.Stop();
-                }   
+                    
+                }
             }
+            //listener.Stop();
         }
 
         private static bool IsInterestingUrl(string url)

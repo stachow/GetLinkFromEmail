@@ -24,9 +24,18 @@ namespace GetLink
 
         public string GetLatestEmailLinkAndBuildHtmlResponse(string emailAddress)
         {
-            string messageBody;
-
-            if (!_emailService.TryGetMostRecentUnreadEmailBodyForAddressAndThenSetAsRead(emailAddress, out messageBody))
+            string messageBody = string.Empty;
+            bool foundEmail = false;
+            
+            try
+            {
+                foundEmail = _emailService.TryGetMostRecentUnreadEmailBodyForAddressAndThenSetAsRead(emailAddress, out messageBody);
+            }
+            catch
+            {
+                foundEmail = false;
+            }
+            if (!foundEmail)
             {
                 _feedback("No email found yet.");
                 return string.Format("<html><meta http-equiv='refresh' content='{0}'>No email yet.<br/><br/>Waiting for {0} seconds ...", 5) ;
